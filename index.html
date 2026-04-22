@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Flash Fix | Premium Mobile Auto Glass Replacements</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -63,9 +63,67 @@
             box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
         }
 
+        /* MOBILE FIXES */
         @media (max-width: 768px) {
             .mobile-cta-bar { display: flex; }
-            .hero-text { font-size: 3rem !important; line-height: 1.1; }
+            .hero-text { font-size: 2.5rem !important; line-height: 1.1; }
+            
+            /* Fix for first card - make content scrollable */
+            .first-card-content {
+                max-height: 280px;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Fix for button cropping in contact section */
+            .contact-section .flex {
+                width: 100%;
+            }
+            
+            .contact-section a {
+                width: 100%;
+                text-align: center;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            /* Fix overlapping text on first card overlay */
+            .first-card-overlay {
+                position: relative !important;
+                background: white !important;
+                margin-top: -30px !important;
+                border-top: none !important;
+                border-left: 4px solid #1e40af !important;
+                max-width: 100% !important;
+                padding: 20px !important;
+            }
+            
+            /* Adjust section padding for mobile */
+            section {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            #services {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+            
+            /* Make first card image container scrollable if needed */
+            .first-card-image-container {
+                max-height: 300px;
+                overflow: hidden;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-text {
+                font-size: 1.8rem !important;
+            }
+            
+            .first-card-content {
+                max-height: 320px;
+            }
         }
     </style>
 </head>
@@ -80,8 +138,8 @@
             <a href="#contact" class="hover:text-blue-700">Get Quote</a>
         </div>
         <div class="flex items-center gap-4">
-            <a href="tel:0617168622" class="hidden sm:block text-slate-900 font-black text-sm tracking-widest">061 716 8622</a>
-            <a href="https://wa.me/27617168622" class="w-12 h-12 bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition">
+            <a href="tel:+27832695206" class="hidden sm:block text-slate-900 font-black text-sm tracking-widest">083 269 5206</a>
+            <a href="https://wa.me/27832695206" class="w-12 h-12 bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition">
                 <i class="fa-brands fa-whatsapp text-2xl"></i>
             </a>
         </div>
@@ -99,8 +157,8 @@
                 Professional repair and replacement services designed to keep you safe on the road. We bring expert solutions directly to your location.
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="tel:0617168622" class="bg-blue-600 text-white px-10 py-5 text-center font-black text-xs uppercase tracking-[0.2em] hover:bg-yellow-400 hover:text-slate-900 transition">
-                    Call: 061 716 8622
+                <a href="tel:+27832695206" class="bg-blue-600 text-white px-10 py-5 text-center font-black text-xs uppercase tracking-[0.2em] hover:bg-yellow-400 hover:text-slate-900 transition">
+                    Call: 083 269 5206
                 </a>
                 <a href="#services" class="bg-white text-slate-900 px-10 py-5 text-center font-black text-xs uppercase tracking-[0.2em] hover:bg-transparent hover:text-white border-2 border-white transition">
                     Our Services
@@ -117,11 +175,14 @@
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
             <div class="md:col-span-8 sharp-card group" data-tilt data-tilt-max="2">
-                <div class="relative h-80 md:h-[450px] overflow-hidden bg-slate-200">
+                <div class="relative h-80 md:h-[450px] overflow-hidden bg-slate-200 first-card-image-container">
                     <img src="page3.jpg" alt="Windscreen Replacement" class="w-full h-full high-def-img">
-                    <div class="absolute bottom-0 left-0 bg-white/95 backdrop-blur-sm p-8 md:p-12 max-w-lg border-t-4 border-blue-800">
-                        <h4 class="text-3xl font-black italic uppercase tracking-tighter mb-2">Windscreen Repair & Replacement</h4>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Expert Mobile Fitment at Your Door</p>
+                    <div class="absolute md:absolute bottom-0 left-0 bg-white/95 backdrop-blur-sm p-8 md:p-12 max-w-lg border-t-4 border-blue-800 first-card-overlay">
+                        <div class="first-card-content">
+                            <h4 class="text-3xl font-black italic uppercase tracking-tighter mb-2">Windscreen Repair & Replacement</h4>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Expert Mobile Fitment at Your Door</p>
+                            <a href="https://wa.me/27832695206" class="md:hidden block bg-blue-600 text-white px-6 py-3 text-center font-black text-[10px] uppercase tracking-[0.2em] hover:bg-blue-700 transition w-full">Get Quote</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -132,7 +193,7 @@
                     <h4 class="text-3xl md:text-4xl font-black italic uppercase tracking-tighter leading-none mb-4">Smash and Grab Tint</h4>
                     <p class="text-xs font-bold uppercase tracking-widest opacity-70">Premium safety film protection for enhanced security.</p>
                 </div>
-                <a href="https://wa.me/27617168622" class="w-full py-4 border-2 border-white text-center font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-blue-700 transition">Get Quote</a>
+                <a href="https://wa.me/27832695206" class="w-full py-4 border-2 border-white text-center font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-blue-700 transition">Get Quote</a>
             </div>
 
             <div class="md:col-span-4 sharp-card group">
@@ -207,15 +268,15 @@
         </div>
     </section>
 
-    <section id="contact" class="max-w-[1400px] mx-auto px-6 md:px-16 py-12 md:py-24">
+    <section id="contact" class="max-w-[1400px] mx-auto px-6 md:px-16 py-12 md:py-24 contact-section">
         <div class="bg-blue-800 p-10 md:p-20 flex flex-col md:flex-row items-center justify-between gap-12 text-white">
             <div class="max-w-2xl text-center md:text-left">
                 <h2 class="text-4xl md:text-6xl font-black italic uppercase tracking-tighter mb-4 leading-tight">Ready to Fix Your Glass?</h2>
                 <p class="text-yellow-400 font-black uppercase tracking-widest text-xs">No Call-Out Fee • Serving all of Johannesburg</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                <a href="tel:0617168622" class="bg-white text-slate-900 px-12 py-5 font-black text-xs uppercase tracking-widest text-center hover:bg-yellow-400 transition">Call Now</a>
-                <a href="https://wa.me/27617168622" class="bg-green-500 text-white px-12 py-5 font-black text-xs uppercase tracking-widest text-center hover:bg-green-600 transition">WhatsApp Quote</a>
+                <a href="tel:+27832695206" class="bg-white text-slate-900 px-12 py-5 font-black text-xs uppercase tracking-widest text-center hover:bg-yellow-400 transition whitespace-nowrap md:whitespace-normal">Call Now</a>
+                <a href="https://wa.me/27832695206" class="bg-green-500 text-white px-12 py-5 font-black text-xs uppercase tracking-widest text-center hover:bg-green-600 transition whitespace-nowrap md:whitespace-normal">WhatsApp Quote</a>
             </div>
         </div>
     </section>
@@ -233,10 +294,10 @@
     </footer>
 
     <div class="mobile-cta-bar">
-        <a href="tel:0617168622" class="flex-1 bg-blue-800 text-white flex items-center justify-center font-black uppercase text-[11px] tracking-widest border-r border-blue-700">
+        <a href="tel:+27832695206" class="flex-1 bg-blue-800 text-white flex items-center justify-center font-black uppercase text-[11px] tracking-widest border-r border-blue-700">
             <i class="fa-solid fa-phone mr-2"></i> Call
         </a>
-        <a href="https://wa.me/27617168622" class="flex-1 bg-green-500 text-white flex items-center justify-center font-black uppercase text-[11px] tracking-widest">
+        <a href="https://wa.me/27832695206" class="flex-1 bg-green-500 text-white flex items-center justify-center font-black uppercase text-[11px] tracking-widest">
             <i class="fa-brands fa-whatsapp mr-2 text-lg"></i> WhatsApp
         </a>
     </div>
