@@ -1,1145 +1,1673 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Fluxyflare | Powering African Businesses Forward</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+    <title>Flash Fix | Automotive Glass Engineering</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Fonts -->
+    <!-- Modern Editorial Display & Interface Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Three.js for 3D Kinetic Background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-primary: #ffffff;
-            --accent-champagne: #fdfbf7;
-            --accent-soft: #f4efe6;
-            --text-main: #121214;
-            --text-muted: #65656a;
-            --text-light: #8e8e93;
-            --border-subtle: #eae6df;
-            --font-serif: 'Cormorant Garamond', serif;
-            --font-sans: 'Inter', sans-serif;
-            --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            --canvas: #f8fafc;
+            --surface-white: #ffffff;
+            
+            --royal-primary: #0b4bf5;
+            --royal-dark: #083ecd;
+            --royal-tint: rgba(11, 75, 245, 0.05);
+            --royal-glow: rgba(11, 75, 245, 0.25);
+            
+            --solar-amber: #f59e0b;
+            --solar-soft: #fef3c7;
+            
+            --text-lead: #090e17;
+            --text-body: #334155;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            
+            --border-hairline: rgba(0, 0, 0, 0.08);
+            --border-highlight: rgba(11, 75, 245, 0.35);
+            --track-conduit: #cbd5e1;
+            
+            --shadow-unibody: 0 16px 36px -10px rgba(9, 14, 23, 0.07), 0 1px 3px rgba(0, 0, 0, 0.02);
+            --shadow-hover: 0 24px 50px -12px rgba(11, 75, 245, 0.16);
+
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-pill: 9999px;
+            
+            --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--canvas);
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-primary);
-            color: var(--text-main);
-            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--canvas);
+            color: var(--text-body);
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
 
-        .font-serif-boutique { font-family: var(--font-serif); }
-
-        /* 3D Canvas Background */
-        #webgl-canvas {
+        /* ── INTERACTIVE 3D WATER SURFACE CANVAS ── */
+        #waterCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 0;
             pointer-events: none;
-            opacity: 0.95;
-        }
-
-        /* Glass Cards with Living Hover Glow */
-        .living-glass-card {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
-            position: relative;
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .living-glass-card::before {
-            content: '';
-            position: absolute;
-            top: var(--mouse-y, -200px);
-            left: var(--mouse-x, -200px);
-            width: 360px;
-            height: 360px;
-            background: radial-gradient(circle, rgba(244, 239, 230, 0.75) 0%, rgba(255, 255, 255, 0) 70%);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            opacity: 0;
-            z-index: 1;
-        }
-
-        .living-glass-card:hover::before { opacity: 1; }
-
-        .living-glass-card:hover {
-            border-color: var(--text-main);
-            transform: translateY(-5px);
-            box-shadow: 0 24px 60px rgba(18, 18, 20, 0.08);
-        }
-
-        /* Grounded Calculator Surface */
-        .stable-instrument-card {
-            background: #ffffff;
-            border: 1px solid var(--border-subtle);
-            box-shadow: 0 20px 45px rgba(18, 18, 20, 0.04);
-            position: relative;
-            transform: none !important;
-            transition: border-color 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .stable-instrument-card:hover {
-            border-color: var(--text-main);
-            box-shadow: 0 24px 50px rgba(18, 18, 20, 0.07);
-        }
-
-        /* Boutique Buttons with Magnetic Feel */
-        .boutique-btn {
-            background: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--text-main);
-            transition: var(--transition-smooth);
-            cursor: pointer;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            font-weight: 600;
-            position: relative;
-            overflow: hidden;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .boutique-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: var(--text-main);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.35s ease, height 0.35s ease;
             z-index: 0;
+            opacity: 0.85;
         }
 
-        .boutique-btn:hover::after {
-            width: 320%;
-            height: 320%;
-        }
-
-        .boutique-btn:hover {
-            color: var(--bg-primary);
-            box-shadow: 0 8px 20px rgba(18, 18, 20, 0.12);
-        }
-
-        .boutique-btn span, .boutique-btn i {
-            position: relative;
-            z-index: 1;
-        }
-
-        .boutique-btn-filled {
-            background: var(--text-main);
-            color: var(--bg-primary);
-            border: 1px solid var(--text-main);
-            transition: var(--transition-smooth);
-            cursor: pointer;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .boutique-btn-filled:hover {
-            background: transparent;
-            color: var(--text-main);
-            box-shadow: 0 8px 20px rgba(18, 18, 20, 0.08);
-        }
-
-        /* Nav Dropdown */
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid var(--border-subtle);
-            padding: 0.8rem 0;
-            min-width: 240px;
-            list-style: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition-smooth);
-            box-shadow: 0 18px 40px rgba(18, 18, 20, 0.06);
-        }
-
-        .nav-link-item:hover .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Slider */
-        input[type=range] {
-            -webkit-appearance: none;
-            height: 4px;
-            background: var(--border-subtle);
-            border-radius: 2px;
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--text-main);
-            cursor: pointer;
-            border: 2px solid #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            transition: transform 0.1s ease;
-        }
-
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-        }
-
-        /* Reading Progress */
-        #readingProgress {
+        /* Interactive Dynamic Cursor Glow Spotlight */
+        #cursorLens {
             position: fixed;
             top: 0;
             left: 0;
-            height: 3px;
-            background: var(--text-main);
-            z-index: 100;
-            width: 0%;
-            transition: width 0.1s ease-out;
+            width: 480px;
+            height: 480px;
+            margin-left: -240px;
+            margin-top: -240px;
+            background: radial-gradient(circle, rgba(11, 75, 245, 0.12) 0%, rgba(11, 75, 245, 0.03) 45%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            transition: transform 0.08s ease-out;
+            will-change: transform;
         }
 
-        /* Bulletproof Native Reveal */
-        .reveal-node {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        /* Ambient Blueprint Grid */
+        .ambient-mesh {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 50% -10%, rgba(11, 75, 245, 0.06) 0%, transparent 60%),
+                linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 50px 50px, 50px 50px;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .reveal-node.pre-reveal {
+        /* ── BUTTON CLICK SPLASH SHOCKWAVE EFFECT ── */
+        .water-splash-ring {
+            position: fixed;
+            border-radius: 50%;
+            border: 2px solid rgba(11, 75, 245, 0.65);
+            background: radial-gradient(circle, rgba(11, 75, 245, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0.2);
+            animation: splashAnim 0.75s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+            z-index: 99999;
+        }
+
+        .splash-droplet {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(11, 75, 245, 0.85);
+            box-shadow: 0 0 10px rgba(11, 75, 245, 0.6);
+            pointer-events: none;
+            z-index: 99999;
+            animation: dropletFly 0.65s cubic-bezier(0.12, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes splashAnim {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(2.8);
+            }
+        }
+
+        @keyframes dropletFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0.3);
+            }
+        }
+
+        /* ── HIGH-DEFINITION NAVIGATION ── */
+        .nav-scaffold {
+            position: fixed;
+            top: 1.25rem;
+            left: 0; right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            padding: 0 1.5rem;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-capsule {
+            pointer-events: auto;
+            max-width: 1140px;
+            width: 100%;
+            height: 68px;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-pill);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+            padding: 0 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s var(--ease-apple);
+        }
+
+        .nav-capsule:hover {
+            box-shadow: 0 18px 44px rgba(11, 75, 245, 0.12);
+            border-color: var(--border-highlight);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.95rem;
+            text-decoration: none;
+            color: var(--text-lead);
+        }
+
+        /* Crisp, properly scaled logo frame without text bleed */
+        .logo-blend-box {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-hairline);
+            padding: 2px;
+        }
+
+        .logo-blend-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            mix-blend-mode: multiply; /* Seamless blending: Eradicates square borders */
+            display: block;
+        }
+
+        .brand-meta h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-meta h1 span { color: var(--royal-primary); }
+
+        .brand-meta p {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--text-body);
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--royal-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* High Visibility Solid Blue Call Button */
+        .btn-call-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-pill);
+            background: var(--royal-primary);
+            border: 1px solid var(--royal-primary);
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 0.84rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px var(--royal-glow);
+            transition: all 0.25s var(--ease-apple);
+            white-space: nowrap;
+        }
+
+        .btn-call-nav:hover {
+            background: var(--royal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(11, 75, 245, 0.35);
+        }
+
+        .btn-wa-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.3rem;
+            border-radius: var(--radius-pill);
+            background: #25D366;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.84rem;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+            transition: all 0.25s var(--ease-apple);
+            white-space: nowrap;
+        }
+
+        .btn-wa-nav:hover {
+            background: #20ba5a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+        }
+
+        /* Mobile Hamburger Toggle */
+        .mobile-nav-toggle {
+            display: none;
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-hairline);
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-lead);
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav-toggle:active {
+            transform: scale(0.92);
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        /* ── NATIVE FULLSCREEN MOBILE DRAWER ── */
+        .mobile-drawer {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
             opacity: 0;
-            transform: translateY(24px);
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: opacity 0.3s var(--ease-apple), transform 0.3s var(--ease-apple);
+        }
+
+        .mobile-drawer.is-open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .drawer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-hairline);
+        }
+
+        .drawer-close {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-lead);
+        }
+
+        .drawer-nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            margin: 2rem 0;
+        }
+
+        .drawer-nav-list a {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-lead);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drawer-nav-list a span {
+            color: var(--royal-primary);
+            font-size: 1.2rem;
+        }
+
+        .drawer-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        /* ── HERO EXPERIENCE ── */
+        .hero {
+            position: relative;
+            z-index: 2;
+            padding-top: 170px;
+            padding-bottom: 30px;
+            text-align: center;
+        }
+
+        .hero-lead-box {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.8rem, 6vw, 5.2rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            color: var(--text-lead);
+            margin-bottom: 1.4rem;
+        }
+
+        .hero-title span {
+            color: var(--royal-primary);
+            background: linear-gradient(135deg, var(--royal-primary) 0%, #1a56db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 2.8rem;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .hero-ctas {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 3.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-luxury-apple {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--royal-primary);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.9rem 2.2rem;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            box-shadow: 0 10px 30px var(--royal-glow);
+            transition: all 0.3s var(--ease-apple);
+        }
+
+        .btn-luxury-apple:hover {
+            background: var(--royal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 18px 45px rgba(11, 75, 245, 0.35);
+        }
+
+        .btn-luxury-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ffffff;
+            color: var(--text-lead);
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.9rem 2rem;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border-hairline);
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s var(--ease-apple);
+        }
+
+        .btn-luxury-ghost:hover {
+            border-color: var(--royal-primary);
+            color: var(--royal-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ── THE PRECISION ASSEMBLY TRACK ── */
+        .track-section {
+            position: relative;
+            z-index: 2;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 6rem;
+        }
+
+        .conduit-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                var(--royal-primary) 8%, 
+                var(--track-conduit) 50%, 
+                var(--royal-primary) 92%, 
+                transparent 100%
+            );
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+
+        .assembly-monolith {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .dock-stage {
+            position: relative;
+            background: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-unibody);
+            overflow: hidden;
+            transition: all 0.4s var(--ease-apple);
+        }
+
+        .dock-stage:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+        }
+
+        .dock-joint {
+            position: relative;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .joint-node {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid var(--track-conduit);
+            box-shadow: 0 0 0 6px var(--canvas);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.4s var(--ease-apple);
+        }
+
+        .joint-node.is-active {
+            border-color: var(--royal-primary);
+            color: var(--royal-primary);
+            box-shadow: 0 0 0 8px rgba(11, 75, 245, 0.12), 0 0 20px rgba(11, 75, 245, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* ── STAGE 01: PANORAMIC WORKBENCH ── */
+        .workbench-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            min-height: 480px;
+        }
+
+        .workbench-visual {
+            position: relative;
+            background: #f1f5f9;
+            overflow: hidden;
+        }
+
+        .workbench-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: contrast(1.05) saturate(1.1);
+            transition: transform 0.8s var(--ease-apple);
+        }
+
+        .dock-stage:hover .workbench-visual img {
+            transform: scale(1.03);
+        }
+
+        .workbench-details {
+            padding: 4.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .stage-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--royal-primary);
+            margin-bottom: 0.8rem;
+        }
+
+        .workbench-details h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--text-lead);
+            letter-spacing: -0.02em;
+            margin-bottom: 1.2rem;
+        }
+
+        .workbench-details p {
+            font-size: 1rem;
+            color: var(--text-body);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* ── STAGE 02: DUAL SYNCHRONIZED SPLIT ── */
+        .dock-stage-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-unibody);
+            transition: all 0.4s var(--ease-apple);
+        }
+
+        .dock-stage-split:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--border-highlight);
+        }
+
+        .split-cell {
+            padding: 3.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .split-cell:first-child {
+            border-right: 1px solid var(--border-hairline);
+        }
+
+        .split-cell:hover {
+            background: var(--royal-tint);
+        }
+
+        .cell-photo-bay {
+            height: 250px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+            background: #e2e8f0;
+        }
+
+        .cell-photo-bay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.05) saturate(1.1);
+            transition: transform 0.6s var(--ease-apple);
+        }
+
+        .split-cell:hover .cell-photo-bay img {
+            transform: scale(1.04);
+        }
+
+        .split-cell h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-lead);
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .split-cell p {
+            font-size: 0.95rem;
+            color: var(--text-body);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .spec-capsules {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .capsule {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: var(--radius-pill);
+            background: var(--canvas);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-hairline);
+        }
+
+        /* ── STAGE 03: INTEGRATED TERMINAL ── */
+        .dock-terminal {
+            background: #ffffff;
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-lg);
+            padding: 4rem;
+            box-shadow: var(--shadow-unibody);
+            transition: all 0.4s var(--ease-apple);
+        }
+
+        .dock-terminal:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--border-highlight);
+        }
+
+        .terminal-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .terminal-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--text-lead);
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.03em;
+        }
+
+        .terminal-header p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .terminal-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.8rem;
+        }
+
+        .terminal-field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-lead);
+            margin-bottom: 0.65rem;
+        }
+
+        .terminal-field select {
+            width: 100%;
+            background: var(--canvas);
+            border: 1px solid var(--border-hairline);
+            border-radius: var(--radius-sm);
+            padding: 1.05rem 1.4rem;
+            font-family: inherit;
+            font-size: 0.98rem;
+            color: var(--text-lead);
+            outline: none;
+            transition: all 0.25s var(--ease-apple);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b4bf5' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.4rem center;
+            background-size: 18px;
+        }
+
+        .terminal-field select:focus {
+            background-color: #ffffff;
+            border-color: var(--royal-primary);
+            box-shadow: 0 0 0 4px var(--royal-glow);
+        }
+
+        .terminal-dock-bar {
+            background: var(--canvas);
+            border-radius: var(--radius-md);
+            padding: 2.2rem;
+            border: 1px solid var(--border-hairline);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .price-sub {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+        }
+
+        .price-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--royal-primary);
+            line-height: 1;
+            margin-top: 0.3rem;
+            letter-spacing: -0.03em;
+        }
+
+        .btn-live-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: #25D366;
+            color: #ffffff;
+            font-size: 0.98rem;
+            font-weight: 600;
+            padding: 1.05rem 2.2rem;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            box-shadow: 0 8px 22px rgba(37, 211, 102, 0.35);
+            transition: all 0.25s var(--ease-apple);
+        }
+
+        .btn-live-whatsapp:hover {
+            background: #20ba5a;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(37, 211, 102, 0.45);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #090e17;
+            color: #ffffff;
+            padding: 5rem 1.5rem 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3.5rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-brand h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+        }
+        .footer-brand h2 span { color: var(--royal-primary); }
+
+        .footer-brand p {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            line-height: 1.7;
+            max-width: 320px;
+        }
+
+        .footer-col h5 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #ffffff;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .footer-col a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.86rem;
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover { color: #ffffff; }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* ── PINNED MOBILE ACTION DOCK ── */
+        .mobile-dock {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-hairline);
+            padding: 0.85rem 1rem calc(0.85rem + env(safe-area-inset-bottom));
+            z-index: 1000;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .mobile-dock-btn {
+            flex: 1;
+            padding: 0.88rem;
+            border-radius: var(--radius-pill);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .m-call { background: var(--royal-primary); color: #ffffff; box-shadow: 0 4px 14px var(--royal-glow); }
+        .m-wa { background: #25D366; color: #ffffff; }
+
+        /* ── MOBILE RESPONSIVENESS OVERRIDES ── */
+        @media (max-width: 900px) {
+            .nav-menu { display: none; }
+            .btn-call-nav { display: none; }
+            .btn-wa-nav { display: none; }
+            .mobile-nav-toggle { display: flex; }
+
+            .nav-scaffold {
+                top: 0;
+                padding: 0.6rem 1rem;
+                background: rgba(255, 255, 255, 0.88);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-bottom: 1px solid var(--border-hairline);
+            }
+
+            .nav-capsule {
+                height: 54px;
+                border-radius: 0;
+                background: transparent;
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+
+            .hero {
+                padding-top: 110px;
+                padding-bottom: 20px;
+            }
+
+            .hero-lead-box {
+                padding: 0 1.25rem;
+            }
+
+            .hero-title {
+                font-size: 2.4rem;
+                letter-spacing: -0.03em;
+            }
+
+            .hero-desc {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+                width: 100%;
+                gap: 0.75rem;
+            }
+
+            .btn-luxury-apple, .btn-luxury-ghost {
+                width: 100%;
+                justify-content: center;
+                padding: 0.95rem;
+            }
+
+            .track-section {
+                padding: 1rem 1rem 4rem;
+            }
+
+            .conduit-line { display: none; }
+            .dock-joint { display: none; }
+            .assembly-monolith { gap: 1.25rem; }
+
+            .workbench-grid {
+                display: flex;
+                flex-direction: column;
+                min-height: auto;
+            }
+
+            .workbench-visual {
+                height: 240px;
+                width: 100%;
+            }
+
+            .workbench-details {
+                padding: 2rem 1.4rem;
+            }
+
+            .workbench-details h3 {
+                font-size: 1.65rem;
+            }
+
+            .workbench-details p {
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .workbench-details .btn-luxury-apple {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .dock-stage-split {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .split-cell {
+                padding: 2rem 1.4rem;
+            }
+
+            .split-cell:first-child {
+                border-right: none;
+                border-bottom: 1px solid var(--border-hairline);
+            }
+
+            .cell-photo-bay {
+                height: 200px;
+                margin-bottom: 1.2rem;
+            }
+
+            .split-cell h4 {
+                font-size: 1.5rem;
+            }
+
+            .dock-terminal {
+                padding: 2rem 1.4rem;
+            }
+
+            .terminal-header {
+                margin-bottom: 2rem;
+            }
+
+            .terminal-header h3 {
+                font-size: 1.75rem;
+            }
+
+            .terminal-matrix {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+                margin-bottom: 1.8rem;
+            }
+
+            .terminal-dock-bar {
+                flex-direction: column;
+                gap: 1.4rem;
+                padding: 1.6rem 1.2rem;
+                text-align: center;
+            }
+
+            .price-val {
+                font-size: 2.5rem;
+            }
+
+            .btn-live-whatsapp {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+                padding-bottom: 2.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 0.6rem;
+                text-align: center;
+            }
+
+            .mobile-dock {
+                display: flex;
+                gap: 0.75rem;
+            }
+
+            body {
+                padding-bottom: 84px;
+            }
         }
     </style>
 </head>
-<body class="relative">
+<body>
 
-    <!-- Progress Indicator -->
-    <div id="readingProgress"></div>
+    <!-- ── INTERACTIVE 3D WATER SIMULATION CANVAS ── -->
+    <canvas id="waterCanvas"></canvas>
+    <div id="cursorLens"></div>
+    <div class="ambient-mesh"></div>
 
-    <!-- 3D Three.js Ambient Kinetic Engine -->
-    <canvas id="webgl-canvas"></canvas>
-
-    <!-- Top Announcement Bar -->
-    <div class="relative z-50 bg-[#fdfbf7] border-b border-[#eae6df] text-center py-2.5 px-6 text-[0.68rem] tracking-[0.2em] uppercase text-[#65656a] flex items-center justify-center gap-4">
-        <span><span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-ping"></span>Johannesburg Cloud Region Active</span>
-        <span class="hidden md:inline text-[#eae6df]">•</span>
-        <span class="hidden md:inline">Tier-3 Certified South African Infrastructure</span>
-        <span class="hidden md:inline text-[#eae6df]">•</span>
-        <span class="font-semibold text-[#121214]">Sub-25ms Local Latency</span>
-    </div>
-
-    <!-- Header Navigation -->
-    <header class="sticky top-0 bg-white/90 backdrop-blur-md border-b border-[#eae6df] z-40 transition-all duration-300">
-        <div class="max-w-[1360px] mx-auto px-6 sm:px-10 h-[88px] flex items-center justify-between">
-            
-            <a href="#" class="flex flex-col justify-center leading-none group">
-                <span class="font-serif-boutique text-2xl font-semibold tracking-wider uppercase text-[#121214]">Fluxyflare</span>
-                <span class="text-[0.55rem] tracking-[0.25em] uppercase text-[#8e8e93] font-medium mt-0.5">Technology Group</span>
+    <!-- ── NAVIGATION: PINNED MOBILE / DESKTOP PILL ── -->
+    <div class="nav-scaffold">
+        <nav class="nav-capsule">
+            <a href="#" class="nav-brand">
+                <div class="logo-blend-box">
+                    <img src="logo.png" alt="Flash Fix Auto Glass Replacements" onerror="this.onerror=null; this.src='WhatsApp Image 2026-09-30 at 11.47.28 AM.jpeg';">
+                </div>
+                <div class="brand-meta">
+                    <h1>FLASH <span>FIX</span></h1>
+                    <p>Auto Glass Specialists</p>
+                </div>
             </a>
 
-            <!-- Desktop Navigation -->
-            <ul class="hidden lg:flex items-center gap-10 list-none">
-                <li class="nav-link-item relative">
-                    <a href="#services" class="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-[#65656a] hover:text-[#121214] py-2 flex items-center gap-1.5 transition-colors">
-                        Core Solutions <i class="fa-solid fa-chevron-down text-[0.52rem] opacity-70"></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#services" class="block px-6 py-2.5 text-[0.74rem] tracking-wide text-[#65656a] hover:bg-[#fdfbf7] hover:text-[#121214] transition-colors">Web Development</a></li>
-                        <li><a href="#services" class="block px-6 py-2.5 text-[0.74rem] tracking-wide text-[#65656a] hover:bg-[#fdfbf7] hover:text-[#121214] transition-colors">Business Automations</a></li>
-                        <li><a href="#services" class="block px-6 py-2.5 text-[0.74rem] tracking-wide text-[#65656a] hover:bg-[#fdfbf7] hover:text-[#121214] transition-colors">Cloud Hosting (ZA)</a></li>
-                        <li><a href="#services" class="block px-6 py-2.5 text-[0.74rem] tracking-wide text-[#65656a] hover:bg-[#fdfbf7] hover:text-[#121214] transition-colors">SEO Services</a></li>
-                        <li><a href="#services" class="block px-6 py-2.5 text-[0.74rem] tracking-wide text-[#65656a] hover:bg-[#fdfbf7] hover:text-[#121214] transition-colors">Website Security</a></li>
-                        <li><a href="#services" class="block px-6 py-2.5 text-[0.74rem] tracking-wide text-[#65656a] hover:bg-[#fdfbf7] hover:text-[#121214] transition-colors">Professional Email</a></li>
-                    </ul>
-                </li>
-                <li class="nav-link-item"><a href="#calculator" class="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-[#65656a] hover:text-[#121214] transition-colors">Investment Scope</a></li>
-                <li class="nav-link-item"><a href="#story" class="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-[#65656a] hover:text-[#121214] transition-colors">The Mission</a></li>
-                <li class="nav-link-item"><a href="#packages" class="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-[#65656a] hover:text-[#121214] transition-colors">Pricing</a></li>
-                <li class="nav-link-item"><a href="#faq" class="text-[0.72rem] font-semibold tracking-[0.16em] uppercase text-[#65656a] hover:text-[#121214] transition-colors">FAQ</a></li>
+            <!-- Desktop Links -->
+            <ul class="nav-menu">
+                <li><a href="#workbench">Services Track</a></li>
+                <li><a href="#calculator">Fitment Calculator</a></li>
+                <li><a href="#coverage">Coverage Area</a></li>
             </ul>
 
-            <!-- Search, Consultation & Mobile Toggle -->
-            <div class="flex items-center gap-5">
-                <div class="relative flex items-center group">
-                    <input id="quickSearchInput" type="text" class="w-0 opacity-0 group-hover:w-[170px] group-hover:opacity-100 focus:w-[170px] focus:opacity-100 border-b border-[#121214] text-xs py-1 transition-all duration-300 bg-transparent outline-none mr-2 placeholder-[#8e8e93]" placeholder="Filter capabilities...">
-                    <button class="bg-none border-none text-sm text-[#121214] cursor-pointer flex items-center" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <!-- Desktop High-Contrast Actions -->
+            <div class="nav-actions">
+                <a href="tel:+27832695206" class="btn-call-nav splash-trigger">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span>Call 083 269 5206</span>
+                </a>
+                <a href="https://wa.me/27832695206" class="btn-wa-nav splash-trigger">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.52 3.449A11.916 11.916 0 0 0 12.072 0C5.467 0 .093 5.373.093 11.979c0 2.112.551 4.173 1.597 5.986L0 24l6.197-1.626a11.94 11.94 0 0 0 5.875 1.533h.005c6.604 0 11.979-5.373 11.979-11.979 0-3.201-1.246-6.209-3.536-8.479zM12.077 21.87h-.004a9.914 9.914 0 0 1-5.053-1.385l-.362-.215-3.754.985 1.002-3.66-.236-.375a9.92 9.92 0 0 1-1.52-5.242c0-5.474 4.454-9.927 9.932-9.927 2.651 0 5.143 1.033 7.014 2.906 1.872 1.874 2.903 4.368 2.903 7.02 0 5.475-4.454 9.928-9.922 9.928zm5.441-7.428c-.298-.149-1.764-.87-2.037-.969-.273-.099-.472-.149-.671.149-.199.298-.77.969-.944 1.168-.174.199-.348.224-.646.075-.298-.149-1.26-.465-2.4-1.482-.888-.792-1.487-1.77-1.661-2.068-.174-.298-.019-.459.13-.608.134-.134.298-.348.447-.522.149-.174.199-.298.298-.497.099-.199.05-.373-.025-.522-.075-.149-.671-1.616-.919-2.213-.242-.579-.487-.501-.671-.51l-.572-.01c-.199 0-.522.075-.795.373s-1.043 1.019-1.043 2.484 1.068 2.882 1.217 3.081c.149.199 2.102 3.21 5.093 4.499.711.307 1.266.49 1.7.627.714.227 1.364.195 1.878.118.573-.086 1.764-.72 2.012-1.416.248-.696.248-1.292.174-1.416-.075-.124-.273-.199-.571-.348z"/>
+                    </svg>
+                    WhatsApp Quote
+                </a>
+            </div>
+
+            <!-- Mobile Hamburger Button -->
+            <button class="mobile-nav-toggle splash-trigger" id="drawerOpenBtn" aria-label="Open Navigation Menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ── NATIVE FULLSCREEN MOBILE DRAWER ── -->
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div>
+            <div class="drawer-top">
+                <div class="nav-brand">
+                    <div class="logo-blend-box">
+                        <img src="logo.png" alt="Flash Fix Emblem" onerror="this.onerror=null; this.src='WhatsApp Image 2026-09-30 at 11.47.28 AM.jpeg';">
+                    </div>
+                    <div class="brand-meta">
+                        <h1>FLASH <span>FIX</span></h1>
+                        <p>Auto Glass Specialists</p>
+                    </div>
                 </div>
-
-                <button onclick="openInquiryModal('Direct Discovery Call')" class="hidden sm:inline-flex boutique-btn px-6 py-2.5 text-[0.66rem] tracking-widest uppercase">
-                    <span>Inquire</span>
+                <button class="drawer-close splash-trigger" id="drawerCloseBtn" aria-label="Close Navigation Menu">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
+            </div>
 
-                <button id="mobileMenuToggle" class="lg:hidden flex flex-col gap-1.5 bg-none border-none cursor-pointer p-1" aria-label="Toggle Navigation Menu">
-                    <span class="w-5 h-[1.5px] bg-[#121214]"></span>
-                    <span class="w-5 h-[1.5px] bg-[#121214]"></span>
-                    <span class="w-5 h-[1.5px] bg-[#121214]"></span>
-                </button>
+            <ul class="drawer-nav-list">
+                <li><a href="#workbench" class="drawer-link splash-trigger">Services Track <span>&rarr;</span></a></li>
+                <li><a href="#calculator" class="drawer-link splash-trigger">Fitment Calculator <span>&rarr;</span></a></li>
+                <li><a href="#coverage" class="drawer-link splash-trigger">Coverage Area <span>&rarr;</span></a></li>
+            </ul>
+        </div>
+
+        <div class="drawer-actions">
+            <a href="tel:+27832695206" class="btn-call-nav splash-trigger" style="width:100%; justify-content:center; padding:1.05rem; font-size:0.95rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                Call: 083 269 5206
+            </a>
+            <a href="https://wa.me/27832695206" class="btn-live-whatsapp splash-trigger" style="width:100%; justify-content:center; padding:1.05rem; font-size:0.95rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.52 3.449A11.916 11.916 0 0 0 12.072 0C5.467 0 .093 5.373.093 11.979c0 2.112.551 4.173 1.597 5.986L0 24l6.197-1.626a11.94 11.94 0 0 0 5.875 1.533h.005c6.604 0 11.979-5.373 11.979-11.979 0-3.201-1.246-6.209-3.536-8.479zM12.077 21.87h-.004a9.914 9.914 0 0 1-5.053-1.385l-.362-.215-3.754.985 1.002-3.66-.236-.375a9.92 9.92 0 0 1-1.52-5.242c0-5.474 4.454-9.927 9.932-9.927 2.651 0 5.143 1.033 7.014 2.906 1.872 1.874 2.903 4.368 2.903 7.02 0 5.475-4.454 9.928-9.922 9.928zm5.441-7.428c-.298-.149-1.764-.87-2.037-.969-.273-.099-.472-.149-.671.149-.199.298-.77.969-.944 1.168-.174.199-.348.224-.646.075-.298-.149-1.26-.465-2.4-1.482-.888-.792-1.487-1.77-1.661-2.068-.174-.298-.019-.459.13-.608.134-.134.298-.348.447-.522.149-.174.199-.298.298-.497.099-.199.05-.373-.025-.522-.075-.149-.671-1.616-.919-2.213-.242-.579-.487-.501-.671-.51l-.572-.01c-.199 0-.522.075-.795.373s-1.043 1.019-1.043 2.484 1.068 2.882 1.217 3.081c.149.199 2.102 3.21 5.093 4.499.711.307 1.266.49 1.7.627.714.227 1.364.195 1.878.118.573-.086 1.764-.72 2.012-1.416.248-.696.248-1.292.174-1.416-.075-.124-.273-.199-.571-.348z"/>
+                </svg>
+                WhatsApp Quick Chat
+            </a>
+        </div>
+    </div>
+
+    <!-- ── HERO STAGE ── -->
+    <header class="hero">
+        <div class="hero-lead-box">
+            <h1 class="hero-title">
+                Optical perfection. <br>
+                <span>Fitted at your premises.</span>
+            </h1>
+            
+            <p class="hero-desc">
+                Dealership-grade windscreen replacement and certified smash &amp; grab security tinting brought directly to your home or office. Zero call-out fees.
+            </p>
+
+            <div class="hero-ctas">
+                <a href="tel:+27832695206" class="btn-luxury-apple splash-trigger">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    Call 083 269 5206
+                </a>
+                <a href="#calculator" class="btn-luxury-ghost splash-trigger">
+                    Calculate Fitment Cost
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Drawer Navigation -->
-    <div id="mobileDrawer" class="fixed inset-0 bg-[#ffffff]/98 backdrop-blur-xl z-50 flex flex-col p-8 transition-transform duration-300 translate-x-full lg:hidden">
-        <div class="flex justify-between items-center pb-6 border-b border-[#eae6df]">
-            <span class="font-serif-boutique text-2xl uppercase tracking-widest text-[#121214]">Fluxyflare</span>
-            <button id="closeDrawerBtn" class="text-2xl text-[#121214]"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="flex flex-col gap-6 mt-8">
-            <a href="#services" class="mobile-nav-link text-base font-medium tracking-wider uppercase text-[#121214]">Core Solutions</a>
-            <a href="#calculator" class="mobile-nav-link text-base font-medium tracking-wider uppercase text-[#121214]">Investment Scope</a>
-            <a href="#story" class="mobile-nav-link text-base font-medium tracking-wider uppercase text-[#121214]">The Mission</a>
-            <a href="#packages" class="mobile-nav-link text-base font-medium tracking-wider uppercase text-[#121214]">Pricing Structure</a>
-            <a href="#faq" class="mobile-nav-link text-base font-medium tracking-wider uppercase text-[#121214]">FAQ</a>
-            <button onclick="openInquiryModal('Mobile Inquiry')" class="boutique-btn-filled py-3.5 text-xs tracking-widest uppercase mt-4">Start Project</button>
-        </div>
-    </div>
+    <!-- ── THE PRECISION ASSEMBLY TRACK ── -->
+    <section class="track-section" id="workbench">
+        <div class="conduit-line"></div>
 
-    <!-- Hero Section -->
-    <section class="relative z-10 max-w-[1100px] mx-auto px-6 sm:px-8 text-center pt-24 pb-16">
-        <span class="relative text-[0.72rem] font-semibold tracking-[0.28em] uppercase text-[#65656a] mb-6 block">Johannesburg, SA • Established 2026</span>
-        <h1 class="relative font-serif-boutique text-5xl sm:text-7xl md:text-8xl font-light tracking-wide uppercase leading-[1.05] text-[#121214] mb-8">
-            Powering African <br><span class="italic font-normal">Growth & Digital Tech.</span>
-        </h1>
-        <p class="relative text-base sm:text-lg font-light text-[#65656a] max-w-[700px] mx-auto mb-12 leading-relaxed">
-            We build, host, and automate. High-tier technology designed by Africans, for Africans—engineered to eliminate expensive foreign markups without compromising speed, uptime, or design.
-        </p>
+        <div class="assembly-monolith">
 
-        <!-- Live Server Network Architecture Canvas -->
-        <div class="relative max-w-[960px] mx-auto living-glass-card border border-[#eae6df] shadow-2xl rounded-sm mb-16 overflow-hidden">
-            <div class="bg-[#121214] text-[#eae6df] px-6 py-3 flex items-center justify-between border-b border-[#27272a] text-xs font-mono">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
-                    <span class="text-[0.68rem] tracking-wider text-[#8e8e93] ml-2">CORE-ROUTING-GATEWAY // ZA-PRIMARY</span>
-                </div>
-                <div class="flex items-center gap-4 text-[0.68rem] text-emerald-400">
-                    <span><i class="fa-solid fa-shield-halved text-[0.65rem] mr-1"></i>ENTERPRISE FIREWALL</span>
-                    <span class="hidden sm:inline">99.9% UPTIME SLA</span>
+            <!-- STAGE 01: WINDSCREEN REPLACEMENT DOCK -->
+            <div class="dock-stage" data-node="0">
+                <div class="workbench-grid">
+                    <div class="workbench-visual">
+                        <img src="page3.jpg" alt="Automotive Glass Installation" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1507136566006-cfc505b114fc?auto=format&fit=crop&q=95&w=1400';">
+                    </div>
+                    <div class="workbench-details">
+                        <span class="stage-badge">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Stage 01 · Structural Glazing
+                        </span>
+                        <h3>OEM Windscreen Replacement</h3>
+                        <p>Complete removal of compromised glass, precision pinchweld prep with corrosion-inhibiting primer, and installation of OEM-grade laminated windscreens with full forward-facing camera/ADAS sensor alignment.</p>
+                        <div>
+                            <a href="https://wa.me/27832695206" class="btn-luxury-apple splash-trigger">
+                                Book Windscreen Service
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <canvas id="techPulseCanvas" class="w-full h-[300px] sm:h-[380px] block bg-[#0c0d10]"></canvas>
+            <!-- INTERLOCK JOINT 1 -->
+            <div class="dock-joint">
+                <div class="joint-node" id="node-0">01</div>
+            </div>
 
-            <div class="p-6 bg-white/95 backdrop-blur-md border-t border-[#eae6df] flex flex-col sm:flex-row justify-between items-center gap-4 text-left">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-[0.65rem] font-bold tracking-[0.2em] uppercase text-[#8e8e93]">Local Network Topology</span>
+            <!-- STAGE 02: DUAL SYNCHRONIZED CELLS -->
+            <div class="dock-stage-split" data-node="1">
+                <!-- Cell A: Smash & Grab -->
+                <div class="split-cell">
+                    <div>
+                        <div class="cell-photo-bay">
+                            <img src="page2.jpg" alt="Smash and Grab Protective Film" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&q=95&w=900';">
+                        </div>
+                        <span class="stage-badge" style="color:var(--solar-amber)">Safety Barrier</span>
+                        <h4>Smash &amp; Grab Safety Tint</h4>
+                        <p>High-tensile optical film bonded to side and rear glass. Resists roadside forced intrusions and prevents hazardous glass shrapnel from entering the vehicle interior.</p>
                     </div>
-                    <span class="font-serif-boutique text-xl text-[#121214]">Dedicated High-Speed South African Infrastructure</span>
+                    <div class="spec-capsules">
+                        <span class="capsule">99% UV Filtration</span>
+                        <span class="capsule">Cabin Heat Shield</span>
+                        <span class="capsule">Impact Retaining</span>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <a href="#packages" class="boutique-btn-filled px-6 py-3 text-[0.65rem]">
-                        Deploy Instance
+
+                <!-- Cell B: Side & Rear Panels -->
+                <div class="split-cell">
+                    <div>
+                        <div class="cell-photo-bay">
+                            <img src="page.jpg" alt="Side and Rear Glass" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&q=95&w=900';">
+                        </div>
+                        <span class="stage-badge">Complete Glazing</span>
+                        <h4>Side &amp; Heated Rear Glass</h4>
+                        <p>Immediate mobile replacement for shattered door panels, quarter glass, and defroster-equipped rear windshields. Includes thorough vacuum clean-up of cabin debris.</p>
+                    </div>
+                    <div class="spec-capsules">
+                        <span class="capsule">Interior Vacuum Included</span>
+                        <span class="capsule">Demister Circuit Check</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERLOCK JOINT 2 -->
+            <div class="dock-joint">
+                <div class="joint-node" id="node-1">02</div>
+            </div>
+
+            <!-- STAGE 03: INTEGRATED TERMINAL -->
+            <div class="dock-terminal" id="calculator" data-node="2">
+                <div class="terminal-header">
+                    <span class="stage-badge">Interactive Terminal</span>
+                    <h3>Fitment Cost Calculator</h3>
+                    <p>Select your vehicle category and service to calculate an immediate baseline estimate.</p>
+                </div>
+
+                <div class="terminal-matrix">
+                    <div class="terminal-field">
+                        <label for="carTier">Vehicle Segment</label>
+                        <select id="carTier" onchange="runCalculation()">
+                            <option value="hatch">Hatchback / Standard Sedan</option>
+                            <option value="suv">Compact SUV / Crossover</option>
+                            <option value="bakkie">Single / Double Cab Bakkie</option>
+                            <option value="luxury">Executive / German Luxury</option>
+                        </select>
+                    </div>
+
+                    <div class="terminal-field">
+                        <label for="workTier">Selected Service</label>
+                        <select id="workTier" onchange="runCalculation()">
+                            <option value="windscreen">Windscreen Replacement</option>
+                            <option value="smash">Smash &amp; Grab Security Tint</option>
+                            <option value="chip">Optical Chip &amp; Crack Repair</option>
+                            <option value="side">Side / Door Pane Replacement</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="terminal-dock-bar">
+                    <div>
+                        <span class="price-sub">Estimated Investment (Zero Call-Out Fee)</span>
+                        <div class="price-val" id="priceDisplay">R1,650*</div>
+                    </div>
+
+                    <a href="#" id="waDynamicLink" class="btn-live-whatsapp splash-trigger">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.52 3.449A11.916 11.916 0 0 0 12.072 0C5.467 0 .093 5.373.093 11.979c0 2.112.551 4.173 1.597 5.986L0 24l6.197-1.626a11.94 11.94 0 0 0 5.875 1.533h.005c6.604 0 11.979-5.373 11.979-11.979 0-3.201-1.246-6.209-3.536-8.479zM12.077 21.87h-.004a9.914 9.914 0 0 1-5.053-1.385l-.362-.215-3.754.985 1.002-3.66-.236-.375a9.92 9.92 0 0 1-1.52-5.242c0-5.474 4.454-9.927 9.932-9.927 2.651 0 5.143 1.033 7.014 2.906 1.872 1.874 2.903 4.368 2.903 7.02 0 5.475-4.454 9.928-9.922 9.928zm5.441-7.428c-.298-.149-1.764-.87-2.037-.969-.273-.099-.472-.149-.671.149-.199.298-.77.969-.944 1.168-.174.199-.348.224-.646.075-.298-.149-1.26-.465-2.4-1.482-.888-.792-1.487-1.77-1.661-2.068-.174-.298-.019-.459.13-.608.134-.134.298-.348.447-.522.149-.174.199-.298.298-.497.099-.199.05-.373-.025-.522-.075-.149-.671-1.616-.919-2.213-.242-.579-.487-.501-.671-.51l-.572-.01c-.199 0-.522.075-.795.373s-1.043 1.019-1.043 2.484 1.068 2.882 1.217 3.081c.149.199 2.102 3.21 5.093 4.499.711.307 1.266.49 1.7.627.714.227 1.364.195 1.878.118.573-.086 1.764-.72 2.012-1.416.248-.696.248-1.292.174-1.416-.075-.124-.273-.199-.571-.348z"/>
+                        </svg>
+                        Confirm via WhatsApp
                     </a>
                 </div>
             </div>
-        </div>
-
-        <!-- Metric Counter Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 border-t border-b border-[#eae6df] py-10 gap-8 relative z-10">
-            <div class="text-center">
-                <div class="font-serif-boutique text-5xl sm:text-6xl font-light text-[#121214]"><span class="counter" data-target="10">0</span>+</div>
-                <div class="text-[0.66rem] font-semibold tracking-[0.16em] uppercase text-[#8e8e93] mt-2">Successful Launches</div>
-            </div>
-            <div class="text-center">
-                <div class="font-serif-boutique text-5xl sm:text-6xl font-light text-[#121214]"><span class="counter" data-target="99">0</span>.9%</div>
-                <div class="text-[0.66rem] font-semibold tracking-[0.16em] uppercase text-[#8e8e93] mt-2">Uptime Infrastructure</div>
-            </div>
-            <div class="text-center">
-                <div class="font-serif-boutique text-5xl sm:text-6xl font-light text-[#121214]">R<span class="counter" data-target="199">0</span><span class="text-xs text-[#65656a]">/mo</span></div>
-                <div class="text-[0.66rem] font-semibold tracking-[0.16em] uppercase text-[#8e8e93] mt-2">Entry Level Cloud</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Core Solutions Grid -->
-    <section id="services" class="relative z-10 max-w-[1000px] mx-auto px-6 sm:px-8 mt-24">
-        <div class="text-center mb-14">
-            <h2 class="font-serif-boutique text-4xl font-light tracking-widest uppercase text-[#121214]">CORE SOLUTIONS</h2>
-            <div class="w-12 h-[1px] bg-[#121214] mx-auto mt-4"></div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="solutionsContainer">
-            
-            <!-- Solution 1 -->
-            <div class="living-glass-card flex flex-col solution-card" data-keywords="web development e-commerce website design portal">
-                <div class="overflow-hidden h-56 border-b border-[#eae6df] relative">
-                    <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80&w=700" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="Web Development">
-                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 text-[0.6rem] font-semibold tracking-widest uppercase text-[#121214] border border-[#eae6df]">Custom Architecture</span>
-                </div>
-                <div class="p-8 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                        <h3 class="font-serif-boutique text-2xl uppercase tracking-wide text-[#121214] mb-3">Web Development</h3>
-                        <p class="text-sm text-[#65656a] font-light leading-relaxed mb-6">Custom builds for businesses. From functional high-end web architectures to dedicated E-Commerce ecosystems engineered for local transactions.</p>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-[#fdfbf7]">
-                        <span class="text-sm font-semibold tracking-wide text-[#121214]">From R3,000</span>
-                        <button onclick="openInquiryModal('Web Development')" class="boutique-btn px-5 py-2 text-[0.65rem]"><span>Inquire</span></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Solution 2 -->
-            <div class="living-glass-card flex flex-col solution-card" data-keywords="business automations whatsapp crm invoice leads booking">
-                <div class="overflow-hidden h-56 border-b border-[#eae6df] relative">
-                    <img src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?auto=format&fit=crop&q=80&w=700" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="Business Automations">
-                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 text-[0.6rem] font-semibold tracking-widest uppercase text-[#121214] border border-[#eae6df]">Smart Workflows</span>
-                </div>
-                <div class="p-8 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                        <h3 class="font-serif-boutique text-2xl uppercase tracking-wide text-[#121214] mb-3">Business Automations</h3>
-                        <p class="text-sm text-[#65656a] font-light leading-relaxed mb-6">Structured WhatsApp automations, booking confirmation flows, and seamless custom billing pipelines that work 24/7 without manual labor.</p>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-[#fdfbf7]">
-                        <span class="text-sm font-semibold tracking-wide text-[#121214]">From R499/mo</span>
-                        <button onclick="openInquiryModal('Business Automations')" class="boutique-btn px-5 py-2 text-[0.65rem]"><span>Inquire</span></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Solution 3 -->
-            <div class="living-glass-card flex flex-col solution-card" data-keywords="cloud hosting servers johannesburg uptime fast">
-                <div class="overflow-hidden h-56 border-b border-[#eae6df] relative">
-                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=700" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="Cloud Hosting">
-                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 text-[0.6rem] font-semibold tracking-widest uppercase text-[#121214] border border-[#eae6df]">ZA Servers</span>
-                </div>
-                <div class="p-8 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                        <h3 class="font-serif-boutique text-2xl uppercase tracking-wide text-[#121214] mb-3">Cloud Hosting</h3>
-                        <p class="text-sm text-[#65656a] font-light leading-relaxed mb-6">Reliable South African server arrays designed to grant optimal local speeds and a dedicated 99.9% uptime metric for business websites.</p>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-[#fdfbf7]">
-                        <span class="text-sm font-semibold tracking-wide text-[#121214]">From R199/mo</span>
-                        <button onclick="openInquiryModal('Cloud Hosting')" class="boutique-btn px-5 py-2 text-[0.65rem]"><span>Inquire</span></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Solution 4 -->
-            <div class="living-glass-card flex flex-col solution-card" data-keywords="seo search engine optimization google rank organic">
-                <div class="overflow-hidden h-56 border-b border-[#eae6df] relative">
-                    <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&q=80&w=700" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="SEO Services">
-                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 text-[0.6rem] font-semibold tracking-widest uppercase text-[#121214] border border-[#eae6df]">Search Growth</span>
-                </div>
-                <div class="p-8 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                        <h3 class="font-serif-boutique text-2xl uppercase tracking-wide text-[#121214] mb-3">SEO Services</h3>
-                        <p class="text-sm text-[#65656a] font-light leading-relaxed mb-6">Strategic optimization architecture to establish long-term organic authority across localized and national search rankings.</p>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-[#fdfbf7]">
-                        <span class="text-sm font-semibold tracking-wide text-[#121214]">From R499/mo</span>
-                        <button onclick="openInquiryModal('SEO Services')" class="boutique-btn px-5 py-2 text-[0.65rem]"><span>Inquire</span></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Solution 5 -->
-            <div class="living-glass-card flex flex-col solution-card" data-keywords="website security firewall ddos backup ssl protection">
-                <div class="overflow-hidden h-56 border-b border-[#eae6df] relative">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=700" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="Website Security">
-                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 text-[0.6rem] font-semibold tracking-widest uppercase text-[#121214] border border-[#eae6df]">Shield</span>
-                </div>
-                <div class="p-8 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                        <h3 class="font-serif-boutique text-2xl uppercase tracking-wide text-[#121214] mb-3">Website Security</h3>
-                        <p class="text-sm text-[#65656a] font-light leading-relaxed mb-6">Comprehensive protection against active exploits, modern DDoS mitigations, alongside managed structural backups to safeguard business data.</p>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-[#fdfbf7]">
-                        <span class="text-sm font-semibold tracking-wide text-[#121214]">From R199/mo</span>
-                        <button onclick="openInquiryModal('Website Security')" class="boutique-btn px-5 py-2 text-[0.65rem]"><span>Inquire</span></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Solution 6 -->
-            <div class="living-glass-card flex flex-col solution-card" data-keywords="professional email custom domain inbox mail business">
-                <div class="overflow-hidden h-56 border-b border-[#eae6df] relative">
-                    <img src="https://images.unsplash.com/photo-1557200134-90327ee9fafa?auto=format&fit=crop&q=80&w=700" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" alt="Professional Email">
-                    <span class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 text-[0.6rem] font-semibold tracking-widest uppercase text-[#121214] border border-[#eae6df]">Deliverability</span>
-                </div>
-                <div class="p-8 flex-grow flex flex-col justify-between relative z-10">
-                    <div>
-                        <h3 class="font-serif-boutique text-2xl uppercase tracking-wide text-[#121214] mb-3">Professional Email</h3>
-                        <p class="text-sm text-[#65656a] font-light leading-relaxed mb-6">Custom white-glove communication architecture to seamlessly establish organizational validation across customer transactions.</p>
-                    </div>
-                    <div class="flex justify-between items-center mt-auto pt-4 border-t border-[#fdfbf7]">
-                        <span class="text-sm font-semibold tracking-wide text-[#121214]">From R149/mo</span>
-                        <button onclick="openInquiryModal('Professional Email')" class="boutique-btn px-5 py-2 text-[0.65rem]"><span>Inquire</span></button>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </section>
 
-    <!-- Grounded Calculator Surface -->
-    <section id="calculator" class="max-w-[1000px] mx-auto px-6 sm:px-8 my-28 relative z-10">
-        <div class="stable-instrument-card p-8 sm:p-12 border border-[#eae6df]">
-            <div class="text-center max-w-xl mx-auto mb-10">
-                <span class="text-[0.68rem] font-bold tracking-[0.25em] uppercase text-[#8e8e93] block mb-2">Transparent Commercial Estimation</span>
-                <h3 class="font-serif-boutique text-3xl sm:text-4xl uppercase text-[#121214]">Project Scope & Value Calculator</h3>
-                <p class="text-xs text-[#65656a] font-light mt-3 leading-relaxed">Configure your enterprise deployment parameters. Transparent pricing with zero hidden overseas fees or vendor lock-in.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
-                <!-- Inputs Column -->
-                <div class="space-y-6 flex flex-col justify-center">
-                    <div>
-                        <div class="flex justify-between text-xs font-semibold uppercase tracking-wider mb-2 text-[#121214]">
-                            <span>Pages / Custom Views</span>
-                            <span id="pageCountLabel" class="text-[#121214] font-bold">5 Pages (Standard Business)</span>
-                        </div>
-                        <input id="pageSlider" type="range" min="1" max="15" value="5" class="w-full">
-                        <div class="flex justify-between text-[0.65rem] text-[#8e8e93] mt-1 font-medium">
-                            <span>1 (Landing Page)</span>
-                            <span>5 (Corporate Standard)</span>
-                            <span>15+ (Full Enterprise Portal)</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-3 pt-2">
-                        <label class="flex items-center gap-3.5 p-3.5 bg-[#fdfbf7] border border-[#eae6df] cursor-pointer hover:border-[#121214] transition-colors rounded-none">
-                            <input type="checkbox" id="calcWhatsapp" class="accent-[#121214] w-4 h-4 cursor-pointer" checked onchange="calculateScopeTotal()">
-                            <div class="flex flex-col">
-                                <span class="text-xs font-medium text-[#121214]">24/7 Automated WhatsApp Inquiry Routing</span>
-                                <span class="text-[0.68rem] text-[#65656a]">Never miss customer leads while offline</span>
-                            </div>
-                        </label>
-
-                        <label class="flex items-center gap-3.5 p-3.5 bg-[#fdfbf7] border border-[#eae6df] cursor-pointer hover:border-[#121214] transition-colors rounded-none">
-                            <input type="checkbox" id="calcSeo" class="accent-[#121214] w-4 h-4 cursor-pointer" checked onchange="calculateScopeTotal()">
-                            <div class="flex flex-col">
-                                <span class="text-xs font-medium text-[#121214]">South African Technical SEO & Google Search Schema</span>
-                                <span class="text-[0.68rem] text-[#65656a]">Built to rank organically in local search intent</span>
-                            </div>
-                        </label>
-
-                        <label class="flex items-center gap-3.5 p-3.5 bg-[#fdfbf7] border border-[#eae6df] cursor-pointer hover:border-[#121214] transition-colors rounded-none">
-                            <input type="checkbox" id="calcCloud" class="accent-[#121214] w-4 h-4 cursor-pointer" checked onchange="calculateScopeTotal()">
-                            <div class="flex flex-col">
-                                <span class="text-xs font-medium text-[#121214]">Managed South African Cloud Node Hosting</span>
-                                <span class="text-[0.68rem] text-[#65656a]">Sub-25ms latency with daily automated backups</span>
-                            </div>
-                        </label>
-                    </div>
+    <!-- ── FOOTER ── -->
+    <footer id="coverage">
+        <div class="footer-wrap">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h2>FLASH <span>FIX</span></h2>
+                    <p>Accredited mobile automotive glass replacement and certified safety film installations. Delivered directly to your premises across Gauteng.</p>
                 </div>
 
-                <!-- Output Column -->
-                <div class="bg-[#fdfbf7] border border-[#eae6df] p-8 sm:p-10 flex flex-col justify-between text-center relative">
-                    <div class="space-y-4">
-                        <span class="text-[0.65rem] font-bold tracking-[0.2em] uppercase text-[#8e8e93]">Estimated Capital Investment</span>
-                        <div class="font-serif-boutique text-5xl sm:text-6xl font-light text-[#121214] my-2">
-                            <span id="estimatedPrice">R4,890</span>
-                        </div>
-                        <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 text-[0.68rem] font-medium px-3 py-1 border border-emerald-200">
-                            <i class="fa-solid fa-check text-[0.6rem]"></i> Complete Ownership • No Lock-In Contracts
-                        </div>
-                        <p class="text-xs text-[#65656a] font-light leading-relaxed pt-2">
-                            Includes modern mobile-first architecture, clean semantics, SSL security handshakes, and post-deployment validation.
-                        </p>
-                    </div>
-
-                    <div class="pt-6">
-                        <button onclick="bookEstimatedScope()" class="w-full boutique-btn-filled py-4 text-xs tracking-widest uppercase">
-                            Lock In This Estimate & Strategy
-                        </button>
-                        <span class="text-[0.62rem] text-[#8e8e93] uppercase tracking-wider block mt-2">Zero Obligation • Direct Founder Response</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- The Founder's Vision Statement -->
-    <section class="bg-[#fdfbf7] py-24 border-t border-b border-[#eae6df] my-24 relative z-10" id="story">
-        <div class="max-w-[1000px] mx-auto px-6 sm:px-8 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-                <h2 class="font-serif-boutique text-4xl font-light tracking-wide uppercase leading-tight mb-8 text-[#121214]">The Founder's <br>Vision</h2>
-                <div class="text-base font-light text-[#65656a] leading-relaxed flex flex-col gap-6">
-                    <p>I started Fluxyflare as a young developer in Johannesburg with a single goal: <strong>Stop African businesses from being overcharged for basic tech.</strong></p>
-                    <p>In South Africa, professional tech is often seen as a luxury. We are here to prove that world-class cloud solutions can be affordable, reliable, and proudly South African. I am inspired to bring the absolute best things to this country.</p>
-                    <p class="font-serif-boutique text-2xl italic text-[#121214] border-l-2 border-[#121214] pl-6 my-4 leading-relaxed">"When your business grows, our continent grows. That is the mission we invite you to join."</p>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="absolute -inset-2 bg-[#eae6df] -z-10 rotate-1 rounded-sm"></div>
-                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800" alt="Strategic Planning Alignment" class="w-full h-[480px] object-cover sepia-[8%] contrast-[98%] border border-[#eae6df] shadow-sm">
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Structure (100% Reliable & Fully Visible) -->
-    <section class="bg-[#fdfbf7] py-24 border-t border-b border-[#eae6df] my-24 relative z-10" id="packages">
-        <div class="max-w-[1000px] mx-auto px-6 sm:px-8">
-            <h2 class="font-serif-boutique text-3xl font-light tracking-widest uppercase text-center mb-14 text-[#121214]">PRICING STRUCTURE</h2>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Starter -->
-                <div class="bg-white border border-[#eae6df] p-10 flex flex-col relative transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                    <h4 class="font-serif-boutique text-2xl uppercase tracking-wide mb-2 text-[#121214]">Starter</h4>
-                    <div class="font-sans text-3xl font-light text-[#121214] border-b border-[#eae6df] pb-4 mb-8">R199 <span class="text-sm text-[#65656a]">/mo</span></div>
-                    <ul class="list-none flex flex-col gap-4 mb-10 flex-grow">
-                        <li class="text-sm text-[#65656a] font-light">✓ 1 Managed Site</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Weekly Backups</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Free SSL Cert</li>
+                <div class="footer-col">
+                    <h5>Services</h5>
+                    <ul>
+                        <li><a href="#workbench">Windscreen Replacement</a></li>
+                        <li><a href="#workbench">Smash &amp; Grab Tinting</a></li>
+                        <li><a href="#workbench">Chip Repairs</a></li>
+                        <li><a href="#workbench">Side &amp; Rear Glass</a></li>
                     </ul>
-                    <button onclick="openInquiryModal('Starter Plan (R199/mo)')" class="block w-full border border-[#121214] py-4 text-xs font-semibold tracking-widest uppercase text-center hover:bg-[#121214] hover:text-white transition-all duration-300">Select</button>
                 </div>
 
-                <!-- Professional -->
-                <div class="bg-white border-2 border-[#121214] p-10 flex flex-col relative shadow-xl shadow-black/5 hover:-translate-y-1 transition-all duration-300">
-                    <span class="absolute top-0 left-8 -translate-y-1/2 bg-[#121214] text-white text-[0.55rem] font-semibold tracking-widest uppercase px-3 py-1">Most Popular Choice</span>
-                    <h4 class="font-serif-boutique text-2xl font-semibold uppercase tracking-wide mb-2 text-[#121214]">Professional</h4>
-                    <div class="font-sans text-3xl font-light text-[#121214] border-b border-[#eae6df] pb-4 mb-8">R699 <span class="text-sm text-[#65656a]">/mo</span></div>
-                    <ul class="list-none flex flex-col gap-4 mb-10 flex-grow">
-                        <li class="text-sm text-[#65656a] font-light">✓ 5 Email Addresses</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ 6hr Priority Support</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ 10 Content Updates</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Security Firewall</li>
+                <div class="footer-col">
+                    <h5>Dispatch Corridors</h5>
+                    <ul>
+                        <li><a href="#">Johannesburg &amp; Rosebank</a></li>
+                        <li><a href="#">Sandton &amp; Bryanston</a></li>
+                        <li><a href="#">Midrand &amp; Centurion</a></li>
+                        <li><a href="#">Pretoria Metros</a></li>
                     </ul>
-                    <button onclick="openInquiryModal('Professional Plan (R699/mo)')" class="block w-full bg-[#121214] text-white py-4 text-xs font-semibold tracking-widest uppercase text-center border border-[#121214] hover:bg-transparent hover:text-[#121214] transition-all duration-300">Start Now</button>
                 </div>
 
-                <!-- Business -->
-                <div class="bg-white border border-[#eae6df] p-10 flex flex-col relative transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                    <h4 class="font-serif-boutique text-2xl uppercase tracking-wide mb-2 text-[#121214]">Business</h4>
-                    <div class="font-sans text-3xl font-light text-[#121214] border-b border-[#eae6df] pb-4 mb-8">R399 <span class="text-sm text-[#65656a]">/mo</span></div>
-                    <ul class="list-none flex flex-col gap-4 mb-10 flex-grow">
-                        <li class="text-sm text-[#65656a] font-light">✓ 3 Email Addresses</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Daily Backups</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Basic SEO Setup</li>
+                <div class="footer-col">
+                    <h5>Contact Dispatch</h5>
+                    <ul>
+                        <li><span style="color:#fff">Phone:</span> 083 269 5206</li>
+                        <li><span style="color:#fff">WhatsApp:</span> +27 83 269 5206</li>
+                        <li><span style="color:#fff">Schedule:</span> Mon–Sat: 07:30–17:30</li>
+                        <li><span style="color:#fff">Emergency:</span> 24/7 Roadside Units</li>
                     </ul>
-                    <button onclick="openInquiryModal('Business Plan (R399/mo)')" class="block w-full border border-[#121214] py-4 text-xs font-semibold tracking-widest uppercase text-center hover:bg-[#121214] hover:text-white transition-all duration-300">Select</button>
-                </div>
-
-                <!-- Premium -->
-                <div class="bg-white border border-[#eae6df] p-10 flex flex-col relative transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-                    <h4 class="font-serif-boutique text-2xl uppercase tracking-wide mb-2 text-[#121214]">Premium</h4>
-                    <div class="font-sans text-3xl font-light text-[#121214] border-b border-[#eae6df] pb-4 mb-8">R999 <span class="text-sm text-[#65656a]">/mo</span></div>
-                    <ul class="list-none flex flex-col gap-4 mb-10 flex-grow">
-                        <li class="text-sm text-[#65656a] font-light">✓ Unlimited Support</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Strategy Calls</li>
-                        <li class="text-sm text-[#65656a] font-light">✓ Advanced SEO</li>
-                    </ul>
-                    <button onclick="openInquiryModal('Premium Plan (R999/mo)')" class="block w-full border border-[#121214] py-4 text-xs font-semibold tracking-widest uppercase text-center hover:bg-[#121214] hover:text-white transition-all duration-300">Select</button>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Accordion -->
-    <section class="max-w-[1000px] mx-auto px-6 sm:px-8 pb-28 relative z-10" id="faq">
-        <h2 class="font-serif-boutique text-3xl font-light tracking-widest uppercase text-center mb-12 text-[#121214]">FAQ</h2>
-        
-        <div class="flex flex-col gap-4">
-            <div class="bg-white border border-[#eae6df] p-7 transition-all duration-300 cursor-pointer faq-card">
-                <div class="flex justify-between items-center faq-header">
-                    <h5 class="text-sm font-semibold text-[#121214]">How long until my site is live?</h5>
-                    <i class="fa-solid fa-chevron-down text-xs text-[#8e8e93] transition-transform duration-300"></i>
-                </div>
-                <div class="faq-body hidden pt-4 mt-3 border-t border-[#eae6df]">
-                    <p class="text-sm text-[#65656a] font-light italic leading-relaxed">For a standard business site, we deploy within 7-14 working days. Dedicated e-commerce architectures take approximately 21 days with checkout and inventory testing included.</p>
                 </div>
             </div>
 
-            <div class="bg-white border border-[#eae6df] p-7 transition-all duration-300 cursor-pointer faq-card">
-                <div class="flex justify-between items-center faq-header">
-                    <h5 class="text-sm font-semibold text-[#121214]">Is there a contract?</h5>
-                    <i class="fa-solid fa-chevron-down text-xs text-[#8e8e93] transition-transform duration-300"></i>
-                </div>
-                <div class="faq-body hidden pt-4 mt-3 border-t border-[#eae6df]">
-                    <p class="text-sm text-[#65656a] font-light italic leading-relaxed">All our monthly cloud packages are strictly month-to-month. You can cancel, upgrade, or migrate at any time through our portal with zero hidden exit penalties.</p>
-                </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Flash Fix Auto Glass Replacements. All rights reserved.</span>
+                <span>SABS 1191 Compliant Mobile Glazing</span>
             </div>
-
-            <div class="bg-white border border-[#eae6df] p-7 transition-all duration-300 cursor-pointer faq-card">
-                <div class="flex justify-between items-center faq-header">
-                    <h5 class="text-sm font-semibold text-[#121214]">Do you offer 24/7 support?</h5>
-                    <i class="fa-solid fa-chevron-down text-xs text-[#8e8e93] transition-transform duration-300"></i>
-                </div>
-                <div class="faq-body hidden pt-4 mt-3 border-t border-[#eae6df]">
-                    <p class="text-sm text-[#65656a] font-light italic leading-relaxed">Our Professional and Premium plans include priority emergency support with SLA commitments. Starter and Business plans are supported within a guaranteed 24-hour turnaround window.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Consultation Modal -->
-    <div id="inquiryModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-white border border-[#eae6df] rounded-none p-8 max-w-lg w-full relative shadow-2xl">
-            <button onclick="closeInquiryModal()" class="absolute top-5 right-5 text-[#8e8e93] hover:text-[#121214] text-lg"><i class="fa-solid fa-xmark"></i></button>
-            
-            <h3 class="font-serif-boutique text-2xl uppercase tracking-wider text-[#121214] mb-1">Direct Consultation</h3>
-            <p class="text-xs text-[#65656a] mb-6">Subject: <span id="modalServiceTag" class="text-[#121214] font-semibold">General Inquiry</span></p>
-
-            <form id="inquiryForm" class="space-y-4" onsubmit="dispatchWhatsApp(event)">
-                <div>
-                    <label class="block text-[0.65rem] uppercase tracking-widest text-[#8e8e93] mb-1 font-semibold">Your Name</label>
-                    <input type="text" id="leadName" required class="w-full bg-[#fdfbf7] border border-[#eae6df] p-3 text-xs text-[#121214] outline-none focus:border-[#121214]">
-                </div>
-                <div>
-                    <label class="block text-[0.65rem] uppercase tracking-widest text-[#8e8e93] mb-1 font-semibold">Business or Enterprise Name</label>
-                    <input type="text" id="leadCompany" class="w-full bg-[#fdfbf7] border border-[#eae6df] p-3 text-xs text-[#121214] outline-none focus:border-[#121214]">
-                </div>
-                <div>
-                    <label class="block text-[0.65rem] uppercase tracking-widest text-[#8e8e93] mb-1 font-semibold">Project Scope / Requirements</label>
-                    <textarea id="leadMessage" rows="3" class="w-full bg-[#fdfbf7] border border-[#eae6df] p-3 text-xs text-[#121214] outline-none focus:border-[#121214]" placeholder="What would you like Fluxyflare to engineer or deploy for you?"></textarea>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                    <button type="submit" class="flex-1 boutique-btn-filled py-3.5 text-xs tracking-wider uppercase flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-whatsapp text-sm"></i> Inquire via WhatsApp
-                    </button>
-                    <button type="button" onclick="dispatchEmail()" class="flex-1 boutique-btn py-3.5 text-xs tracking-wider uppercase flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-envelope text-sm"></i> Inquire via Email
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Original Boutique Footer -->
-    <footer class="bg-[#fdfbf7] border-t border-[#eae6df] py-24 relative z-10">
-        <div class="max-w-[1000px] mx-auto px-6 sm:px-8 flex flex-col items-center text-center gap-14">
-            
-            <div>
-                <h4 class="text-[0.72rem] font-bold tracking-[0.2em] uppercase text-[#121214] mb-6">Quick Links</h4>
-                <ul class="flex justify-center gap-10 list-none flex-wrap">
-                    <li><a href="#services" class="text-[0.78rem] tracking-wide text-[#65656a] hover:text-[#121214] hover:underline">Solutions</a></li>
-                    <li><a href="#calculator" class="text-[0.78rem] tracking-wide text-[#65656a] hover:text-[#121214] hover:underline">Calculator</a></li>
-                    <li><a href="#story" class="text-[0.78rem] tracking-wide text-[#65656a] hover:text-[#121214] hover:underline">The Mission</a></li>
-                    <li><a href="#packages" class="text-[0.78rem] tracking-wide text-[#65656a] hover:text-[#121214] hover:underline">Pricing</a></li>
-                    <li><a href="#faq" class="text-[0.78rem] tracking-wide text-[#65656a] hover:text-[#121214] hover:underline">FAQ</a></li>
-                </ul>
-            </div>
-
-            <div class="max-w-[600px]">
-                <p class="font-serif-boutique text-2xl italic text-[#121214] mb-3">Empowering the African digital economy.</p>
-                <p class="text-[0.85rem] font-light text-[#65656a] leading-relaxed">Empowering the African digital economy through accessible, professional-grade technology. Built with pride in South Africa.</p>
-            </div>
-
-            <div class="flex flex-col items-center justify-center leading-none">
-                <span class="font-serif-boutique text-2xl font-normal tracking-wider uppercase text-[#121214]">Fluxyflare</span>
-            </div>
-
-            <div class="mt-4 border-t border-[#eae6df] pt-8 w-full max-w-[400px]">
-                <p class="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-[#8e8e93] mb-1">Response Promise</p>
-                <p class="font-serif-boutique text-xl italic text-[#121214]">Always Within 24 Hours.</p>
-                <p class="text-[0.72rem] tracking-wide text-[#8e8e93] mt-2 font-semibold uppercase">info@fluxyflare.co.za</p>
-            </div>
-
-            <div>
-                <h4 class="text-[0.75rem] font-bold tracking-[0.2em] uppercase text-[#121214] mb-5">Stay in touch.</h4>
-                <div class="flex justify-center gap-10">
-                    <a href="#" target="_blank" rel="noopener" class="text-[0.85rem] tracking-widest uppercase font-semibold text-[#65656a] border-b border-transparent hover:text-[#121214] hover:border-[#121214] transition-all duration-300">Instagram</a>
-                    <a href="#" target="_blank" rel="noopener" class="text-[0.85rem] tracking-widest uppercase font-semibold text-[#65656a] border-b border-transparent hover:text-[#121214] hover:border-[#121214] transition-all duration-300">LinkedIn</a>
-                    <a href="#" target="_blank" rel="noopener" class="text-[0.85rem] tracking-widest uppercase font-semibold text-[#65656a] border-b border-transparent hover:text-[#121214] hover:border-[#121214] transition-all duration-300">Facebook</a>
-                </div>
-            </div>
-
-            <div class="w-full flex flex-col sm:flex-row justify-between items-center text-[0.65rem] font-semibold tracking-[0.15em] uppercase text-[#8e8e93] border-t border-[#eae6df] pt-8 mt-8 gap-4">
-                <span>© 2026 Fluxyflare Technology Group</span>
-                <span>Johannesburg, South Africa</span>
-            </div>
-
         </div>
     </footer>
 
-    <!-- WhatsApp Floating Action Button -->
-    <a href="https://wa.me/27832695206?text=Hello%20Fluxyflare,%20I%20would%20like%20to%20inquire%20about%20your%20digital%20solutions." 
-       class="fixed bottom-[30px] right-[30px] w-[55px] h-[55px] bg-[#25d366] text-white rounded-full flex items-center justify-center text-2xl shadow-lg shadow-[#25d366]/20 z-50 hover:scale-108 hover:-translate-y-0.5 hover:bg-[#20ba5a] transition-all duration-300" 
-       target="_blank" 
-       rel="noopener" 
-       aria-label="WhatsApp Live Support">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
+    <!-- ── PINNED MOBILE ACTION DOCK ── -->
+    <div class="mobile-dock">
+        <a href="tel:+27832695206" class="mobile-dock-btn m-call splash-trigger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            Call Dispatch
+        </a>
+        <a href="https://wa.me/27832695206" class="mobile-dock-btn m-wa splash-trigger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.52 3.449A11.916 11.916 0 0 0 12.072 0C5.467 0 .093 5.373.093 11.979c0 2.112.551 4.173 1.597 5.986L0 24l6.197-1.626a11.94 11.94 0 0 0 5.875 1.533h.005c6.604 0 11.979-5.373 11.979-11.979 0-3.201-1.246-6.209-3.536-8.479zM12.077 21.87h-.004a9.914 9.914 0 0 1-5.053-1.385l-.362-.215-3.754.985 1.002-3.66-.236-.375a9.92 9.92 0 0 1-1.52-5.242c0-5.474 4.454-9.927 9.932-9.927 2.651 0 5.143 1.033 7.014 2.906 1.872 1.874 2.903 4.368 2.903 7.02 0 5.475-4.454 9.928-9.922 9.928zm5.441-7.428c-.298-.149-1.764-.87-2.037-.969-.273-.099-.472-.149-.671.149-.199.298-.77.969-.944 1.168-.174.199-.348.224-.646.075-.298-.149-1.26-.465-2.4-1.482-.888-.792-1.487-1.77-1.661-2.068-.174-.298-.019-.459.13-.608.134-.134.298-.348.447-.522.149-.174.199-.298.298-.497.099-.199.05-.373-.025-.522-.075-.149-.671-1.616-.919-2.213-.242-.579-.487-.501-.671-.51l-.572-.01c-.199 0-.522.075-.795.373s-1.043 1.019-1.043 2.484 1.068 2.882 1.217 3.081c.149.199 2.102 3.21 5.093 4.499.711.307 1.266.49 1.7.627.714.227 1.364.195 1.878.118.573-.086 1.764-.72 2.012-1.416.248-.696.248-1.292.174-1.416-.075-.124-.273-.199-.571-.348z"/>
+            </svg>
+            WhatsApp Quote
+        </a>
+    </div>
 
-    <!-- Interactive Scripts -->
+    <!-- ── 3D FLUID CANVAS & CURSOR INTERACTION ENGINE ── -->
     <script>
-        /* -------------------------------------------------------------------------
-           1. THREE.JS 3D CONCENTRIC DUAL LATTICE
-        ------------------------------------------------------------------------- */
-        let scene, camera, renderer, outerLattice, innerLattice;
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
+        // 1. High-Performance Fluid Water Canvas with Mouse Follower
+        const canvas = document.getElementById('waterCanvas');
+        const ctx = canvas.getContext('2d');
+        const lens = document.getElementById('cursorLens');
 
-        function initThreeJS() {
-            const canvas = document.getElementById('webgl-canvas');
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3000);
-            camera.position.z = 850;
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
 
-            const outerGeo = new THREE.IcosahedronGeometry(420, 2);
-            const outerMat = new THREE.MeshBasicMaterial({
-                color: 0x121214,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.05
-            });
-            outerLattice = new THREE.Mesh(outerGeo, outerMat);
-            scene.add(outerLattice);
+        let ripples = [];
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let lastMouseX = mouseX;
+        let lastMouseY = mouseY;
+        let isMoving = false;
+        let idleTimer = null;
+        let time = 0;
 
-            const innerGeo = new THREE.IcosahedronGeometry(270, 2);
-            const innerMat = new THREE.PointsMaterial({
-                color: 0x65656a,
-                size: 2.8,
-                transparent: true,
-                opacity: 0.22
-            });
-            innerLattice = new THREE.Points(innerGeo, innerMat);
-            scene.add(innerLattice);
-
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            document.addEventListener('mousemove', (e) => {
-                targetX = (e.clientX - windowHalfX) * 0.07;
-                targetY = (e.clientY - windowHalfY) * 0.07;
-            });
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        }
-
-        function animateThree() {
-            requestAnimationFrame(animateThree);
-            if (outerLattice && innerLattice) {
-                outerLattice.rotation.x += 0.0006;
-                outerLattice.rotation.y += 0.0009;
-
-                innerLattice.rotation.x -= 0.0009;
-                innerLattice.rotation.y -= 0.0006;
-
-                mouseX += (targetX - mouseX) * 0.05;
-                mouseY += (targetY - mouseY) * 0.05;
-
-                camera.position.x = mouseX;
-                camera.position.y = -mouseY;
-                camera.lookAt(scene.position);
-            }
-            renderer.render(scene, camera);
-        }
-
-        /* -------------------------------------------------------------------------
-           2. INTERACTIVE 2D SERVER NETWORK PULSE
-        ------------------------------------------------------------------------- */
-        function initTechPulse() {
-            const canvas = document.getElementById('techPulseCanvas');
-            const ctx = canvas.getContext('2d');
-            let w, h;
-            let nodes = [];
-            const nodeCount = 38;
-
-            function resize() {
-                w = canvas.width = canvas.offsetWidth;
-                h = canvas.height = canvas.offsetHeight;
-                nodes = [];
-                for (let i = 0; i < nodeCount; i++) {
-                    nodes.push({
-                        x: Math.random() * w,
-                        y: Math.random() * h,
-                        vx: (Math.random() - 0.5) * 0.85,
-                        vy: (Math.random() - 0.5) * 0.85,
-                        radius: Math.random() * 2 + 1.5,
-                        pulse: Math.random() * Math.PI
-                    });
-                }
-            }
-
-            resize();
-            window.addEventListener('resize', resize);
-
-            function draw() {
-                ctx.clearRect(0, 0, w, h);
-
-                const grad = ctx.createLinearGradient(0, 0, w, h);
-                grad.addColorStop(0, '#0c0d10');
-                grad.addColorStop(1, '#16171d');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, w, h);
-
-                ctx.strokeStyle = 'rgba(234, 230, 223, 0.04)';
-                ctx.lineWidth = 1;
-                for (let x = 0; x < w; x += 40) {
-                    ctx.beginPath();
-                    ctx.moveTo(x, 0);
-                    ctx.lineTo(x, h);
-                    ctx.stroke();
-                }
-                for (let y = 0; y < h; y += 40) {
-                    ctx.beginPath();
-                    ctx.moveTo(0, y);
-                    ctx.lineTo(w, y);
-                    ctx.stroke();
-                }
-
-                for (let i = 0; i < nodeCount; i++) {
-                    for (let j = i + 1; j < nodeCount; j++) {
-                        const dx = nodes[i].x - nodes[j].x;
-                        const dy = nodes[i].y - nodes[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-
-                        if (dist < 135) {
-                            ctx.beginPath();
-                            ctx.moveTo(nodes[i].x, nodes[i].y);
-                            ctx.lineTo(nodes[j].x, nodes[j].y);
-                            ctx.strokeStyle = `rgba(244, 239, 230, ${0.18 * (1 - dist / 135)})`;
-                            ctx.lineWidth = 0.85;
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-                for (let i = 0; i < nodeCount; i++) {
-                    const n = nodes[i];
-                    n.x += n.vx;
-                    n.y += n.vy;
-
-                    if (n.x < 0 || n.x > w) n.vx *= -1;
-                    if (n.y < 0 || n.y > h) n.vy *= -1;
-
-                    n.pulse += 0.035;
-                    const r = n.radius + Math.sin(n.pulse) * 0.8;
-
-                    ctx.beginPath();
-                    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
-                    ctx.fillStyle = i % 5 === 0 ? 'rgba(16, 185, 129, 0.9)' : 'rgba(253, 251, 247, 0.85)';
-                    ctx.fill();
-                }
-
-                requestAnimationFrame(draw);
-            }
-
-            draw();
-        }
-
-        /* -------------------------------------------------------------------------
-           3. CURSOR LIGHT FOR CARDS
-        ------------------------------------------------------------------------- */
-        document.querySelectorAll('.living-glass-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         });
 
-        /* -------------------------------------------------------------------------
-           4. GROUNDED CALCULATOR
-        ------------------------------------------------------------------------- */
-        const pageSlider = document.getElementById('pageSlider');
-        const pageCountLabel = document.getElementById('pageCountLabel');
-        const estimatedPrice = document.getElementById('estimatedPrice');
+        class Ripple {
+            constructor(x, y, maxRadius = 140, strength = 1, isWake = false) {
+                this.x = x;
+                this.y = y;
+                this.radius = isWake ? 4 : 8;
+                this.maxRadius = maxRadius;
+                this.strength = strength;
+                this.alpha = 0.5 * strength;
+                this.speed = isWake ? 1.8 : 2.6;
+            }
 
-        function calculateScopeTotal() {
-            const pages = parseInt(pageSlider.value);
-            pageCountLabel.innerText = `${pages} ${pages === 1 ? 'Page (Landing Page)' : pages <= 5 ? 'Pages (Corporate Standard)' : 'Pages (Enterprise Portal)'}`;
+            update() {
+                this.radius += this.speed;
+                this.alpha = (1 - (this.radius / this.maxRadius)) * 0.45 * this.strength;
+            }
 
-            let total = 3000 + ((pages - 1) * 350);
-            if (document.getElementById('calcWhatsapp').checked) total += 690;
-            if (document.getElementById('calcSeo').checked) total += 750;
-            if (document.getElementById('calcCloud').checked) total += 450;
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(11, 75, 245, ${Math.max(0, this.alpha)})`;
+                ctx.lineWidth = 2.2;
+                ctx.stroke();
 
-            estimatedPrice.innerText = `R${total.toLocaleString()}`;
+                // Refraction inner wave
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(0, this.radius * 0.65), 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(37, 211, 102, ${Math.max(0, this.alpha * 0.4)})`;
+                ctx.lineWidth = 1.1;
+                ctx.stroke();
+                ctx.restore();
+            }
         }
 
-        pageSlider.addEventListener('input', calculateScopeTotal);
+        // Mouse / Touch Position Tracker
+        function handlePointer(x, y) {
+            mouseX = x;
+            mouseY = y;
 
-        function bookEstimatedScope() {
-            const total = estimatedPrice.innerText;
-            const pages = pageSlider.value;
-            const features = [];
-            if (document.getElementById('calcWhatsapp').checked) features.push('WhatsApp Automation');
-            if (document.getElementById('calcSeo').checked) features.push('Technical SEO');
-            if (document.getElementById('calcCloud').checked) features.push('Cloud Node Hosting');
+            if (lens) {
+                lens.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+            }
 
-            const scopeDescription = `Calculated Scope: ${pages} Pages (${total}) with: ${features.join(', ')}`;
-            openInquiryModal(scopeDescription);
+            const dist = Math.hypot(mouseX - lastMouseX, mouseY - lastMouseY);
+            if (dist > 18) {
+                ripples.push(new Ripple(mouseX, mouseY, 90 + Math.min(dist * 1.5, 90), 0.75, true));
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+            }
+
+            isMoving = true;
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => { isMoving = false; }, 200);
         }
 
-        /* -------------------------------------------------------------------------
-           5. DOM LIVE SEARCH
-        ------------------------------------------------------------------------- */
-        const searchInput = document.getElementById('quickSearchInput');
-        const solutionCards = document.querySelectorAll('.solution-card');
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            solutionCards.forEach(card => {
-                const keywords = card.getAttribute('data-keywords').toLowerCase();
-                const text = card.innerText.toLowerCase();
-                if (keywords.includes(query) || text.includes(query) || query === '') {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+        window.addEventListener('mousemove', (e) => {
+            handlePointer(e.clientX, e.clientY);
         });
 
-        /* -------------------------------------------------------------------------
-           6. ACCORDION FAQ
-        ------------------------------------------------------------------------- */
-        document.querySelectorAll('.faq-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const body = card.querySelector('.faq-body');
-                const chevron = card.querySelector('.faq-header i');
-                const isOpen = !body.classList.contains('hidden');
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                handlePointer(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
 
-                document.querySelectorAll('.faq-body').forEach(b => b.classList.add('hidden'));
-                document.querySelectorAll('.faq-header i').forEach(i => i.style.transform = 'rotate(0deg)');
+        // Periodic ambient waves
+        function triggerAmbientRipple() {
+            if (!isMoving) {
+                const rx = (width * 0.2) + Math.random() * (width * 0.6);
+                const ry = (height * 0.2) + Math.random() * (height * 0.6);
+                ripples.push(new Ripple(rx, ry, 150, 0.5));
+            }
+        }
+        setInterval(triggerAmbientRipple, 2200);
 
-                if (!isOpen) {
-                    body.classList.remove('hidden');
-                    chevron.style.transform = 'rotate(180deg)';
+        function renderWater() {
+            ctx.clearRect(0, 0, width, height);
+
+            time += 0.015;
+            ctx.save();
+            ctx.fillStyle = "rgba(11, 75, 245, 0.015)";
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+            for (let x = 0; x <= width; x += 40) {
+                const y = Math.sin(x * 0.003 + time) * 15 + Math.cos(x * 0.002 + time * 1.4) * 12 + (height * 0.85);
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(width, height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // Render ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                ripples[i].update();
+                ripples[i].draw();
+                if (ripples[i].radius >= ripples[i].maxRadius) {
+                    ripples.splice(i, 1);
                 }
-            });
+            }
+
+            requestAnimationFrame(renderWater);
+        }
+        renderWater();
+
+        // 2. Realistic Button & Click Water Splash
+        function createWaterSplash(x, y) {
+            ripples.push(new Ripple(x, y, 220, 1.3));
+            ripples.push(new Ripple(x, y, 140, 0.95));
+
+            // Shockwave DOM ring
+            const ring = document.createElement('div');
+            ring.className = 'water-splash-ring';
+            ring.style.left = `${x}px`;
+            ring.style.top = `${y}px`;
+            ring.style.width = '120px';
+            ring.style.height = '120px';
+            document.body.appendChild(ring);
+            setTimeout(() => ring.remove(), 750);
+
+            // Flying liquid droplets
+            const dropletCount = 12;
+            for (let i = 0; i < dropletCount; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'splash-droplet';
+                drop.style.left = `${x}px`;
+                drop.style.top = `${y}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 45 + Math.random() * 80;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                drop.style.setProperty('--tx', `${tx}px`);
+                drop.style.setProperty('--ty', `${ty}px`);
+
+                document.body.appendChild(drop);
+                setTimeout(() => drop.remove(), 650);
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            createWaterSplash(e.clientX, e.clientY);
         });
 
-        /* -------------------------------------------------------------------------
-           7. COUNTERS & READING BAR
-        ------------------------------------------------------------------------- */
-        let countersRan = false;
-        function runCounters() {
-            if (countersRan) return;
-            const counters = document.querySelectorAll('.counter');
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                let count = 0;
-                const increment = Math.ceil(target / 40);
-                const timer = setInterval(() => {
-                    count += increment;
-                    if (count >= target) {
-                        counter.innerText = target;
-                        clearInterval(timer);
+        // 3. Fullscreen Mobile Drawer Interactions
+        const drawer = document.getElementById('mobileDrawer');
+        const openBtn = document.getElementById('drawerOpenBtn');
+        const closeBtn = document.getElementById('drawerCloseBtn');
+        const drawerLinks = document.querySelectorAll('.drawer-link');
+
+        function toggleDrawer(open) {
+            drawer.classList.toggle('is-open', open);
+            document.body.style.overflow = open ? 'hidden' : '';
+        }
+
+        if (openBtn) openBtn.addEventListener('click', () => toggleDrawer(true));
+        if (closeBtn) closeBtn.addEventListener('click', () => toggleDrawer(false));
+        drawerLinks.forEach(link => link.addEventListener('click', () => toggleDrawer(false)));
+
+        // 4. Track Node Lighting on Scroll
+        const stages = document.querySelectorAll('[data-node]');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const nodeIndex = entry.target.getAttribute('data-node');
+                const nodeElem = document.getElementById(`node-${nodeIndex}`);
+                if (nodeElem) {
+                    if (entry.isIntersecting) {
+                        nodeElem.classList.add('is-active');
                     } else {
-                        counter.innerText = count;
+                        nodeElem.classList.remove('is-active');
                     }
-                }, 30);
-            });
-            countersRan = true;
-        }
-
-        window.addEventListener('scroll', () => {
-            const total = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = (window.scrollY / total) * 100;
-            document.getElementById('readingProgress').style.width = `${progress}%`;
-
-            const counterEl = document.querySelector('.counter');
-            if (counterEl) {
-                const rect = counterEl.getBoundingClientRect();
-                if (rect.top < window.innerHeight && rect.bottom >= 0) {
-                    runCounters();
                 }
-            }
+            });
+        }, {
+            threshold: 0.25
         });
 
-        /* -------------------------------------------------------------------------
-           8. CONSULTATION MODAL ACTIONS
-        ------------------------------------------------------------------------- */
-        let currentSubject = 'General Inquiry';
-        const inquiryModal = document.getElementById('inquiryModal');
-        const modalServiceTag = document.getElementById('modalServiceTag');
+        stages.forEach(stage => observer.observe(stage));
 
-        function openInquiryModal(serviceName) {
-            currentSubject = serviceName;
-            modalServiceTag.innerText = serviceName;
-            inquiryModal.classList.remove('opacity-0', 'pointer-events-none');
-            
-            if (serviceName.startsWith('Calculated Scope:')) {
-                document.getElementById('leadMessage').value = `I would like to move forward with the following scope estimate:\n${serviceName}`;
-            }
+        // 5. Calculator Pricing & WhatsApp Deep-Link
+        const priceMatrix = {
+            hatch:   { windscreen: "R1,650", smash: "R1,200", chip: "R450", side: "R1,100" },
+            suv:     { windscreen: "R2,100", smash: "R1,450", chip: "R450", side: "R1,350" },
+            bakkie:  { windscreen: "R1,850", smash: "R1,100", chip: "R450", side: "R1,200" },
+            luxury:  { windscreen: "R2,900", smash: "R1,800", chip: "R550", side: "R1,750" }
+        };
+
+        function runCalculation() {
+            const car = document.getElementById('carTier').value;
+            const work = document.getElementById('workTier').value;
+            const price = priceMatrix[car][work];
+
+            document.getElementById('priceDisplay').innerText = `${price}*`;
+
+            const carName = document.getElementById('carTier').options[document.getElementById('carTier').selectedIndex].text;
+            const workName = document.getElementById('workTier').options[document.getElementById('workTier').selectedIndex].text;
+
+            const text = encodeURIComponent(`Hi Flash Fix, I would like to book a mobile glass repair:\n- Service: ${workName}\n- Vehicle Segment: ${carName}\n- Estimated Price: ${price}`);
+            document.getElementById('waDynamicLink').href = `https://wa.me/27832695206?text=${text}`;
         }
 
-        function closeInquiryModal() {
-            inquiryModal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        function dispatchWhatsApp(e) {
-            e.preventDefault();
-            const name = document.getElementById('leadName').value || 'Client';
-            const company = document.getElementById('leadCompany').value || 'Business';
-            const message = document.getElementById('leadMessage').value || 'I would like to inquire.';
-            
-            const text = `*Inquiry: ${currentSubject}*\n*Name:* ${name}\n*Company:* ${company}\n*Scope/Details:* ${message}`;
-            window.open(`https://wa.me/27832695206?text=${encodeURIComponent(text)}`, '_blank');
-            closeInquiryModal();
-        }
-
-        function dispatchEmail() {
-            const name = document.getElementById('leadName').value || 'Client';
-            const company = document.getElementById('leadCompany').value || 'Business';
-            const message = document.getElementById('leadMessage').value || 'I would like to inquire.';
-
-            const subject = encodeURIComponent(`Fluxyflare Inquiry: ${currentSubject}`);
-            const body = encodeURIComponent(`Name: ${name}\nCompany: ${company}\nScope: ${currentSubject}\n\nProject Scope:\n${message}`);
-            window.location.href = `mailto:info@fluxyflare.co.za?subject=${subject}&body=${body}`;
-            closeInquiryModal();
-        }
-
-        /* -------------------------------------------------------------------------
-           9. MOBILE MENU
-        ------------------------------------------------------------------------- */
-        const mobileDrawer = document.getElementById('mobileDrawer');
-        document.getElementById('mobileMenuToggle').addEventListener('click', () => {
-            mobileDrawer.classList.remove('translate-x-full');
-        });
-        document.getElementById('closeDrawerBtn').addEventListener('click', () => {
-            mobileDrawer.classList.add('translate-x-full');
-        });
-        document.querySelectorAll('.mobile-nav-link').forEach(link => {
-            link.addEventListener('click', () => mobileDrawer.classList.add('translate-x-full'));
-        });
-
-        // Initialize Everything cleanly on DOM ready
-        window.addEventListener('DOMContentLoaded', () => {
-            initThreeJS();
-            animateThree();
-            initTechPulse();
-            calculateScopeTotal();
-        });
+        runCalculation();
     </script>
 </body>
 </html>
